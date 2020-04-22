@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import Search from '../Search/Search';
+// import Search from '../Search/Search';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -11,7 +11,7 @@ class Dashboard extends Component {
         return (
             <div>
                 <h1>Dashboard</h1>
-                <Search />
+                {/* <Search /> */}
             </div>
         );
     }
