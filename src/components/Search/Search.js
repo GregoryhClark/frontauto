@@ -4,6 +4,8 @@ import axios from 'axios';
 import Table from '../Table/Table';
 import { APIBase } from '../../config/constants';
 import BetterTable from '../BetterTable/BetterTable';
+import FilterSelect from '../BetterTable/components/FilterSelect';
+import TableFilters from '../BetterTable/components/TableFilters';
 
 function Search(props) {
     const [hasAWD, setHasAWD] = useState(false);
@@ -71,8 +73,6 @@ function Search(props) {
             })
         })
     }
-
-
     var getTableData = async (link) => {
         let res = await axios.get(link);
         setSearchResults({
@@ -160,6 +160,22 @@ function Search(props) {
         ],
         []
     );
+    const setFilter = (key, val)=>{
+        console.log("MAH KEY N VAl:", key, val)
+        let newFilters = {...filterParams};
+        newFilters[key] = val;
+        setFilterParams(newFilters);
+    }
+
+    const route = '/vehicles/vehicles';
+    const getQueryParams = () =>{
+        var params = '/';
+        for(var key in filterParams){
+            console.log("I DON'T EXIST",key, filterParams[key])
+            params = params + `?${key}=${filterParams[key]}`
+        } 
+        return params !== '/'? params:'';
+    }
     return (
         <div className={styles.search_master}>
             {/* <button onClick={getSearchResults}>Search</button>
@@ -244,7 +260,8 @@ function Search(props) {
                     />
                 </div>
             </div> */}
-            <BetterTable setTableData={setTableData} reqURL={`${APIBase}/vehicles/vehicles`} columns={columns} />
+            <TableFilters setFilter={setFilter}/>
+            <BetterTable setTableData={setTableData} reqURL={`${APIBase}${route}`} columns={columns} getQueryParams={getQueryParams}/>
         </div>
     );
 }

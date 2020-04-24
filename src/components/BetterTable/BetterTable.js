@@ -1,66 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
-import { useTable, usePagination } from 'react-table'
+import React from 'react';
+import { useTable, usePagination } from 'react-table';
 import axios from 'axios';
+import styles from './BetterTable.module.css';
+import TableFilters from '../BetterTable/components/TableFilters';
 
-const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 3px solid #eee;
-
-    tbody{
-        border: 1px solid blue;
-        background-color:white;
-        box-shadow: 0 0 0 1px black;
-    }
-    tr:nth-child(even){
-        background-color:#f0f0f0;
-        // background-color:#f5f5ff;
-    }
-    tr: hover{
-        background-color:#f5f5ff;
-    }
-
-    thead {
-        box-shadow: 0 0 0 1px black;
-
-    }
-    th {
-        background-color: #f5f7f7;
-        padding: .25em;
-        font-weight: 600;
-        font-size: 12px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    }
-    // th :after{
-    //     border-right: 1px solid rgba(189, 195, 199, 0.5);
-    // content: " ";
-    // height: 16px;
-    // margin-top: 8px;
-    // position: absolute;
-    // text-indent: -2000px;
-    // top: 0;
-    // }
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      :first-child{
-        border-right: 1px solid black;
-    }
-    :last-child{
-        border-right: 0;
-    }
-    }
-  }
-
-  .pagination {
-    padding: 0.5rem;
-  }
-`
-
-// inner table border : border: 1px solid #BDC3C7;
 
 function Table({
     columns,
@@ -69,6 +12,7 @@ function Table({
     loading,
     pageCount: controlledPageCount,
     rowCount,
+    queryParams
 }) {
     const {
         getTableProps,
@@ -84,7 +28,6 @@ function Table({
         nextPage,
         previousPage,
         setPageSize,
-        // Get the state from the instance
         state: { pageIndex, pageSize },
     } = useTable(
         {
@@ -99,7 +42,7 @@ function Table({
 
     // Listen for changes in pagination and use the state to fetch new data
     React.useEffect(() => {
-        fetchData({ pageIndex, pageSize, rowCount })
+        fetchData({ pageIndex, pageSize, rowCount, queryParams })
     }, [fetchData, pageIndex, pageSize, rowCount])
 
     return (
@@ -136,19 +79,17 @@ function Table({
                     })}
                     <tr>
                         {loading ? (
-                            // Use our custom loading state to show a loading indicator
                             <td colSpan="10000">Loading...</td>
                         ) : (
                                 <td colSpan="10000">
-                                    Showing {page.length} of {rowCount}{' '}
-                results
+                                    {`Showing ${page.length} of ${rowCount} results.`}
                                 </td>
                             )}
                     </tr>
                 </tbody>
             </table>
 
-            <div className="pagination">
+            <div className={styles.pagination}>
                 <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
                     {'<<'}
                 </button>{' '}
@@ -206,15 +147,16 @@ function BetterTable(props) {
     const fetchIdRef = React.useRef(0)
     const [rowCount, setRowCount] = React.useState(0)
 
-    const fetchData = React.useCallback(async ({ pageIndex, pageSize }) => {
+    const fetchData = React.useCallback(async ({ pageIndex, pageSize, rowCount, queryParams }) => {
 
         // Give this fetch an ID
         const fetchId = ++fetchIdRef.current
         console.log("ID", fetchId)
 
         setLoading(true)
+        console.log("queryParams:", queryParams)
         //Only update the data if this is the latest fetch
-        let res = await axios.get(`${props.reqURL}/?page=${pageIndex + 1}`);
+        let res = await axios.get(`${props.reqURL}/${queryParams}?page=${pageIndex + 1}`);
 
         if (fetchId === fetchIdRef.current) {
             setPageCount(Math.ceil(res.data.count / res.data.page_size))
@@ -226,7 +168,8 @@ function BetterTable(props) {
 
     return (
         <div style={{ border: "3px solid #eee", padding: "10px" }}>
-            <Styles>
+            <TableFilters fetchData={fetchData}/>
+            <div>
                 <Table
                     columns={props.columns}
                     data={data}
@@ -234,8 +177,9 @@ function BetterTable(props) {
                     loading={loading}
                     pageCount={pageCount}
                     rowCount={rowCount}
+                    queryParams={props.getQueryParams()}
                 />
-            </Styles>
+            </div>
         </div>
 
     )
