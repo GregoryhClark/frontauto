@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTable, usePagination } from 'react-table';
 import axios from 'axios';
 import styles from './BetterTable.module.css';
-import TableFilters from '../BetterTable/components/TableFilters';
-
+import TableFilters from './components/TableFilters';
 
 function Table({
     columns,
@@ -40,6 +39,7 @@ function Table({
         usePagination
     )
 
+
     // Listen for changes in pagination and use the state to fetch new data
     React.useEffect(() => {
         fetchData({ pageIndex, pageSize, rowCount, queryParams })
@@ -47,6 +47,7 @@ function Table({
 
     return (
         <>
+
             <table {...getTableProps()}>
                 <thead>
                     {headerGroups.map(headerGroup => (
@@ -141,20 +142,40 @@ function Table({
 
 function BetterTable(props) {
 
-    const [data, setData] = React.useState([])
-    const [loading, setLoading] = React.useState(false)
-    const [pageCount, setPageCount] = React.useState(0)
-    const fetchIdRef = React.useRef(0)
-    const [rowCount, setRowCount] = React.useState(0)
+    const [data, setData] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+    const [pageCount, setPageCount] = React.useState(0);
+    const fetchIdRef = React.useRef(0);
+    const [rowCount, setRowCount] = React.useState(0);
+    const [filterSelection, setFilterSelection] = useState({});
+
 
     const fetchData = React.useCallback(async ({ pageIndex, pageSize, rowCount, queryParams }) => {
 
         // Give this fetch an ID
         const fetchId = ++fetchIdRef.current
-        console.log("ID", fetchId)
+        console.log("ID", fetchId, "INDEX", pageIndex)
 
         setLoading(true)
-        console.log("queryParams:", queryParams)
+        //Only update the data if this is the latest fetch
+        let res = await axios.get(`${props.reqURL}/${queryParams}?page=${pageIndex + 1}`);
+
+        if (fetchId === fetchIdRef.current) {
+            setPageCount(Math.ceil(res.data.count / res.data.page_size))
+            setData(props.setTableData(res.data.results))
+            setRowCount(res.data.count)
+            setLoading(false)
+        }
+    }, []);
+    const filterData = React.useCallback(async ({ pageIndex, pageSize, rowCount, queryParams }) => {
+
+        // Give this fetch an ID
+        const fetchId = ++fetchIdRef.current
+        console.log("ID", fetchId, "INDEX", pageIndex)
+
+        setLoading(true);
+        // setPageIndex(0);
+        console.log(queryParams, "URLLLLLL");
         //Only update the data if this is the latest fetch
         let res = await axios.get(`${props.reqURL}/${queryParams}?page=${pageIndex + 1}`);
 
@@ -165,10 +186,36 @@ function BetterTable(props) {
             setLoading(false)
         }
     }, [])
+    const setFilter = (key, val) => {
+        console.log("MAH KEY N VAl:", key, val)
+        let newFilters = { ...filterSelection };
+        newFilters[key] = val;
+        setFilterSelection(newFilters);
+    }
+    const getQueryParams = () => {
+        var params = '/';
+        for (var key in filterSelection) {
+            params = params + `?${key}=${filterSelection[key]}`
+        }
+        return params !== '/' ? params : '';
+    }
 
     return (
-        <div style={{ border: "3px solid #eee", padding: "10px" }}>
-            <TableFilters fetchData={fetchData}/>
+        <div style={{ border: "3px solid #eee", padding: "10px", margin: '10px' }}>
+
+            {/* {props.filterOptions && props.filterOptions.length ? (
+                <TableFilters
+                    setFilter={setFilter}
+                    filterOptions={props.filterOptions}
+                    filterSelection={filterSelection}
+                />
+            ) : null} */}
+            <TableFilters 
+            setFilter={setFilter}
+            filterOptions={props.filterOptions}
+            filterData={filterData}
+            columns={props.columns}
+            />
             <div>
                 <Table
                     columns={props.columns}
@@ -177,7 +224,7 @@ function BetterTable(props) {
                     loading={loading}
                     pageCount={pageCount}
                     rowCount={rowCount}
-                    queryParams={props.getQueryParams()}
+                    queryParams={getQueryParams()}
                 />
             </div>
         </div>

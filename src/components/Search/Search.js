@@ -4,8 +4,9 @@ import axios from 'axios';
 import Table from '../Table/Table';
 import { APIBase } from '../../config/constants';
 import BetterTable from '../BetterTable/BetterTable';
-import FilterSelect from '../BetterTable/components/FilterSelect';
-import TableFilters from '../BetterTable/components/TableFilters';
+// import FilterSelect from '../BetterTable/components/FilterSelect';
+// import TableFilters from '../BetterTable/components/TableFilters';
+import BestTable from '../BestTable/BestTable';
 
 function Search(props) {
     const [hasAWD, setHasAWD] = useState(false);
@@ -146,125 +147,108 @@ function Search(props) {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Year',
-                accessor: 'year'
+                Header: <p onClick={()=>{console.log("Hooray")}}>Year</p>,
+                accessor: 'year',
+                filterable:false,
+                sortable:true
             },
             {
                 Header: 'Make',
-                accessor: 'make'
+                accessor: 'make',
+                filterable:true,
+                sortable:true
             },
             {
                 Header: 'Model',
-                accessor: 'v_model'
+                accessor: 'v_model',
+                filterable:true,
+                sortable:true
             }
         ],
         []
     );
     const setFilter = (key, val)=>{
-        console.log("MAH KEY N VAl:", key, val)
         let newFilters = {...filterParams};
         newFilters[key] = val;
         setFilterParams(newFilters);
     }
 
     const route = '/vehicles/vehicles';
-    const getQueryParams = () =>{
-        var params = '/';
-        for(var key in filterParams){
-            console.log("I DON'T EXIST",key, filterParams[key])
-            params = params + `?${key}=${filterParams[key]}`
-        } 
-        return params !== '/'? params:'';
-    }
+    
     return (
         <div className={styles.search_master}>
-            {/* <button onClick={getSearchResults}>Search</button>
-            <label>Make:</label><select onChange={(e) => updateFilterParams('make', e.target.value)}>{renderMakeOptions()}</select>
-            <label>Model:</label><select onChange={(e) => updateFilterParams('v_model', e.target.value)}>{renderModelOptions()}</select>
-            <label>Year:</label><select onChange={(e) => updateFilterParams('year', e.target.value)}>{renderYearOptions()}</select>
-
-            <label>Sort by:</label>
-    <select>{sortOptions()}</select> */}
-
-            {/* 
-            <Table
-                getPage={getPage}
-                tableData={searchResults.tableData}
-                getTableData={getTableData}
-                previousPage={searchResults.previousPage}
-                nextPage={searchResults.nextPage}
-                currentPage={searchResults.currentPage}
-                count={searchResults.count}
-                page_size={searchResults.page_size}
-            /> */}
-            {/* <div className={styles.options_wrapper}>
-                <div className={styles.checkbox_wrapper}>
-                    <label>AWD</label>
-                    <input
-                        type="checkbox"
-                        checked={hasAWD}
-                        onChange={(e) => { setHasAWD(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>Blind Spot Detection</label>
-                    <input
-                        type="checkbox"
-                        checked={hasBlindspotDetection}
-                        onChange={(e) => { setHasBlindspotDetection(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>Lane Departure Warning</label>
-                    <input
-                        type="checkbox"
-                        checked={hasLaneDepartureWarning}
-                        onChange={(e) => { setHasLaneDepartureWarning(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>Lane Keep Assist</label>
-                    <input
-                        type="checkbox"
-                        checked={hasLaneKeepAssist}
-                        onChange={(e) => { setLaneKeepAssist(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>HUD</label>
-                    <input
-                        type="checkbox"
-                        checked={hasHUD}
-                        onChange={(e) => { setHasHUD(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>Apple Car</label>
-                    <input type="checkbox"
-                        checked={hasAppleCar}
-                        onChange={(e) => { setHasAppleCar(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>Android Auto</label>
-                    <input type="checkbox"
-                        checked={hasAndroidAuto}
-                        onChange={(e) => { setHasAndroidAuto(e.target.checked) }}
-                    />
-                </div>
-                <div className={styles.checkbox_wrapper}>
-                    <label>Emergency Braking</label>
-                    <input type="checkbox"
-                        checked={hasEmergencyBraking}
-                        onChange={(e) => { setHasEmergencyBraking(e.target.checked) }}
-                    />
-                </div>
-            </div> */}
-            <TableFilters setFilter={setFilter}/>
-            <BetterTable setTableData={setTableData} reqURL={`${APIBase}${route}`} columns={columns} getQueryParams={getQueryParams}/>
+            {/* <TableFilters setFilter={setFilter}/> */}
+            
+            <BetterTable setTableData={setTableData} reqURL={`${APIBase}${route}`} columns={columns} />
+            <hr/>
+            <BestTable setTableData={setTableData} reqURL={`${APIBase}${route}`} columns={columns} />
         </div>
     );
 }
 export default Search;
 
 
+
+//  <div className={styles.options_wrapper}>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>AWD</label>
+//                     <input
+//                         type="checkbox"
+//                         checked={hasAWD}
+//                         onChange={(e) => { setHasAWD(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>Blind Spot Detection</label>
+//                     <input
+//                         type="checkbox"
+//                         checked={hasBlindspotDetection}
+//                         onChange={(e) => { setHasBlindspotDetection(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>Lane Departure Warning</label>
+//                     <input
+//                         type="checkbox"
+//                         checked={hasLaneDepartureWarning}
+//                         onChange={(e) => { setHasLaneDepartureWarning(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>Lane Keep Assist</label>
+//                     <input
+//                         type="checkbox"
+//                         checked={hasLaneKeepAssist}
+//                         onChange={(e) => { setLaneKeepAssist(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>HUD</label>
+//                     <input
+//                         type="checkbox"
+//                         checked={hasHUD}
+//                         onChange={(e) => { setHasHUD(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>Apple Car</label>
+//                     <input type="checkbox"
+//                         checked={hasAppleCar}
+//                         onChange={(e) => { setHasAppleCar(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>Android Auto</label>
+//                     <input type="checkbox"
+//                         checked={hasAndroidAuto}
+//                         onChange={(e) => { setHasAndroidAuto(e.target.checked) }}
+//                     />
+//                 </div>
+//                 <div className={styles.checkbox_wrapper}>
+//                     <label>Emergency Braking</label>
+//                     <input type="checkbox"
+//                         checked={hasEmergencyBraking}
+//                         onChange={(e) => { setHasEmergencyBraking(e.target.checked) }}
+//                     />
+//                 </div>
+//             </div> 

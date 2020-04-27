@@ -1,6 +1,7 @@
 table {
     border-spacing: 0;
     border: 3px solid #eee;
+    width:100%;
 }
 tbody{
     border: 1px solid blue;
@@ -31,26 +32,46 @@ th {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 th :after{
-    border-right: 1px solid rgba(189, 195, 199, 0.5);
+    /* border-right: 1px solid rgba(189, 195, 199, 0.5);
      content: " ";
      height: 16px;
      margin-top: 8px;
-     position: absolute;
-     text-indent: -2000px;
-     top: 0;
+     text-indent: -2000px; */
      }
-     td {
+td {
         margin: 0;
-        padding: 0.5rem;
+        /* padding: 0.5rem; */
+        /* display: flex;
+        flex-wrap: wrap;
+        justify-content: center; */
+        text-align:center;
+        font-weight: 400;
         
       }
-      td :first-child{
+td :first-child{
         border-right: 1px solid black;
       }
-      td :last-child{
+td :last-child{
           border-right: 0;
       }
-      .pagination {
+.pagination {
         padding: 0.5rem;
       }
    
+
+.filtersWrapper{
+    margin: 0 0 10px 0;
+}
+
+.filters{
+    display: flex;
+    flex-wrap:wrap;
+}
+.filterBtn{
+    margin:5px 0 0 0;
+}
+
+
+.filterLabel{
+    margin: 0 5px;
+}

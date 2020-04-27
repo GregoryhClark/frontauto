@@ -30,14 +30,9 @@ const Admin = () => {
     }
 
     var setNewField = (field, value) => {
-        console.log('Up her', value)
         let newVehicleData = { ...newVehicle };
-        // console.log(newVehicleData)
         newVehicleData[field] = value;
-        console.log(newVehicleData)
         setNewVehicle(newVehicleData);
-        // console.log(newVehicle)
-        setTimeout(1000, console.log('sec', newVehicleData))
     }
 
     var getModelOptions = () => {
